@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{caption}
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.05,0.06,0.09}
+\definecolor{textcolor}{rgb}{0.9,0.9,0.9}
+\definecolor{keywordcolor}{rgb}{0.96,0.62,0.04}
+\definecolor{stringcolor}{rgb}{0.2,0.8,0.5}
+
+\lstdefinelanguage{TypeScript}{
+  keywords={abstract, any, as, boolean, break, case, catch, class, const, continue, debugger, declare, default, delete, do, else, enum, export, extends, false, finally, for, from, function, get, if, implements, import, in, instanceof, interface, is, keyof, let, module, namespace, new, null, number, object, private, protected, public, readonly, require, return, set, static, string, super, switch, this, throw, true, try, type, typeof, undefined, var, void, while, with, yield},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegray},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{stringcolor},
+  basicstyle=\ttfamily\footnotesize\color{textcolor},
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Relatorio de Progresso e Arquitetura - VTT RPG},
+}
+
+\title{\textbf{Relatório Técnico de Progresso e Arquitetura}\\ Sistema VTT RPG Web de Alta Fidelidade (D\&D 5e)}
+\author{\textbf{Equipe de Desenvolvimento VTT RPG}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este relatório apresenta o detalhamento técnico do progresso e da arquitetura do software para a plataforma web de VTT (\textit{Virtual Tabletop}) inspirada nas mecânicas do D\&D 5e e na interface visual do jogo \textit{Baldur's Gate 3}. São documentados os módulos de criação de personagens com mecânica de \textit{Point Buy}, mapa tático baseado em grelha com cálculo de alcance por distância de Chebyshev, motor de interpretação de rolagens de dados (\textit{parser} regex com suporte a acertos/falhas críticas), log de batalha em tempo real sincronizado via WebSockets e o painel de controle do Mestre. O documento aborda a modelagem relacional do banco de dados no Supabase (PostgreSQL) e as políticas de segurança \textit{Row Level Security} (RLS) imutáveis para integridade de dados.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introdução e Escopo do Projeto}
+O objetivo deste projeto é o desenvolvimento de uma plataforma web de \textit{Virtual Tabletop} (VTT) focada em proporcionar uma experiência imersiva, moderna e fluida para partidas de RPG de Mesa baseadas na 5ª Edição do \textit{Dungeons \& Dragons} (D\&D 5e).
+
+\subsection{Stack Tecnológica Escolhida}
+\begin{itemize}
+    \item \textbf{Frontend Framework:} Next.js (React 18 / App Router) com TypeScript.
+    \item \textbf{Estilização e UI:} Tailwind CSS.
+    \item \textbf{Backend \& Persistência:} Supabase (PostgreSQL).
+    \item \textbf{Sincronização Multiplayer:} Supabase Realtime (WebSockets).
+    \item \textbf{Segurança:} Políticas de \textit{Row Level Security} (RLS).
+\end{itemize}
+
+\section{Arquitetura da Base de Dados e Segurança (RLS)}
+A persistência de dados foi projetada sobre um modelo relacional no PostgreSQL.
+
+\subsection{Modelo Relacional}
+\begin{enumerate}
+    \item \texttt{campaigns}: Armazena os dados da sessão.
+    \item \texttt{tokens}: Representa os elementos do mapa tático.
+    \item \texttt{room\_events}: Log unificado do chat e rolagens.
+    \item \texttt{room\_members}: Associação N:N entre utilizadores e campanhas.
+\end{enumerate}
+
+\section{Estado Atual do Projeto e Próximos Passos}
+\begin{table}[h!]
+\centering
+\caption{Status de Desenvolvimento dos Módulos do VTT}
+\begin{tabular}{lll}
+\toprule
+\textbf{Módulo / Funcionalidade} & \textbf{Status} & \textbf{Tecnologias Envolvidas} \\
+\midrule
+Criação de Personagens (Point Buy) & Concluído & React, TypeScript, Tailwind CSS \\
+HUD Ativo do Jogador & Concluído & React, State Management \\
+Mapa Tático 2D \& Grid & Concluído & React, Distância de Chebyshev \\
+Base de Dados Relacional \& RLS & Concluído & Supabase, PostgreSQL, RLS \\
+Motor de Dados (Dice Parser) & Concluído & TypeScript, Regex Engine \\
+Sincronização Multiplayer Realtime & Concluído & Supabase Realtime, WebSockets \\
+Painel do Mestre (DM Dashboard) & Concluído & React, Supabase API \\
+Integração da Tela Única (GameRoom)& Concluído & Next.js App Router, Tailwind \\
+Gerador de Avatares por IA & Pendente & OpenAI DALL-E 3 / Replicate API \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{thebibliography}{9}
+\bibitem{srd51} Wizards of the Coast. \textit{System Reference Document 5.1 (SRD5)}. 2016.
+\bibitem{supabaseDocs} Supabase Inc. \textit{Supabase Documentation}. 2026.
+\bibitem{nextjsDocs} Vercel. \textit{Next.js App Router Documentation}. 2026.
+\end{thebibliography}
+
+\end{document}
